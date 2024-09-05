@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Weather Prediction</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background: linear-gradient(to right, #FFDEE9, #B5FFFC); /* Gradient background */
+            font-family: 'Arial', sans-serif;
+        }
+        .container {
+            background: rgba(255, 255, 255, 0.9); /* Slightly transparent white background */
+            padding: 30px;
+            border-radius: 20px; /* More rounded corners */
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+            border: 1px solid #ddd; /* Light border for a soft edge */
+        }
+        .rain-bg, .no-rain-bg {
+            border-radius: 20px; /* Rounded corners for the form */
+            padding: 20px;
+        }
+        .rain-bg {
+            background-color: #87CEEB; /* Light blue color for rain */
+        }
+        .no-rain-bg {
+            background-color:#98FB98; /* Pale green color for no rain */
+        }
+        .rain-text {
+            color: #1E90FF; /* Dodger blue color for rain text */
+        }
+        .no-rain-text {
+            color: #93cedb; /* Forest green color for no rain text */
+        }
+        .btn-primary {
+            background-color: #1E90FF; /* Custom blue color */
+            border-color: #1E90FF;
+            border-radius: 20px; /* Rounded corners */
+            transition: all 0.3s ease;
+        }
+        .btn-primary:hover {
+            background-color: #4682B4; /* Darker blue color on hover */
+            border-color: #4682B4;
+        }
+        .form-control {
+            border-radius: 20px; /* Rounded corners for inputs */
+        }
+        .form-control-range {
+            border-radius: 20px; /* Rounded corners for range inputs */
+        }
+        .form-control-output {
+            color: #333;
+        }
+        .select-wrapper {
+            border-radius: 20px; /* Rounded corners for select */
+            box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.2);
+        }
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container mt-5" >
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <h1 class="text-center mb-4">Forecast Rain</h1>
+                <!-- Form section -->
+                <div class="p-4 {{ 'rain-bg' if prediction == 1 else 'no-rain-bg' }}">
+                    <form action="/predict" method="post">
+                        <div class="form-group">
+                            <label for="temperature">Temperature (C):</label>
+                            <input type="number" class="form-control" id="temperature" name="temperature" step="1" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="humidity">Humidity:</label>
+                            <input type="range" class="form-control-range" id="humidity" name="humidity" min="0" max="100" step="1" value="10" oninput="this.nextElementSibling.value = this.value">
+                            <output class="form-control-output ml-2">10</output>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="pressure">Pressure (millibars):</label>
+                            <input type="range" class="form-control-range" id="pressure" name="pressure" min="1000" max="1100" step="1" value="1050" oninput="this.nextElementSibling.value = this.value">
+                            <output class="form-control-output ml-2">1050</output>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="summary">Summary:</label>
+                            <select id="summary" name="summary" class="form-control">
+                                <option value="0">Breezy</option>
+                                <option value="1">Breezy and Dry</option>
+                                <option value="2">Breezy and Foggy</option>
+                                <option value="3">Breezy and Mostly Cloudy</option>
+                                <option value="4">Breezy and Overcast</option>
+                                <option value="5">Breezy and Partly Cloudy</option>
+                                <option value="6">Clear</option>
+                                <option value="7">Dangerously Windy and Partly Cloudy</option>
+                                <option value="8">Drizzle</option>
+                                <option value="9">Dry</option>
+                                <option value="10">Dry and Mostly Cloudy</option>
+                                <option value="11">Dry and Partly Cloudy</option>
+                                <option value="12">Foggy</option>
+                                <option value="13">Humid and Mostly Cloudy</option>
+                                <option value="14">Humid and Overcast</option>
+                                <option value="15">Humid and Partly Cloudy</option>
+                                <option value="16">Light Rain</option>
+                                <option value="17">Mostly Cloudy</option>
+                                <option value="18">Overcast</option>
+                                <option value="19">Partly Cloudy</option>
+                                <option value="20">Rain</option>
+                                <option value="21">Windy</option>
+                                <option value="22">Windy and Dry</option>
+                                <option value="23">Windy and Foggy</option>
+                                <option value="24">Windy and Mostly Cloudy</option>
+                                <option value="25">Windy and Overcast</option>
+                                <option value="26">Windy and Partly Cloudy</option>
+                            </select>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary btn-block">Predict</button>
+                    </form>
+                </div>
+
+                <!-- Prediction result section -->
+                {% if prediction is not none %}
+                <h2 class="text-center mt-4 {{ 'rain-text' if prediction == 1 else 'no-rain-text' }}">
+                    Prediction: {{ 'Rain' if prediction == 1 else 'No Rain' }}
+                </h2>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS and dependencies -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>
