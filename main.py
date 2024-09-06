@@ -11,7 +11,7 @@ app = Flask(__name__)
 # Load the trained model
 # model = load_model('model.h5')
 
-model_path = os.path.join(os.path.dirname(__file__), 'models', 'model.h5')
+model_path = os.path.join(os.path.dirname(__file__),  'model.h5')
 model = load_model(model_path)
 
 
