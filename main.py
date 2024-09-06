@@ -3,12 +3,17 @@ import numpy as np
 import pandas as pd
 from sklearn.preprocessing import MinMaxScaler
 from tensorflow.keras.models import load_model
+import os
 
 # Initialize the Flask application
 app = Flask(__name__)
 
 # Load the trained model
-model = load_model('model.h5')
+# model = load_model('model.h5')
+
+model_path = os.path.join(os.path.dirname(__file__), 'models', 'model.h5')
+model = load_model(model_path)
+
 
 
 # Define the home route to render the HTML form
